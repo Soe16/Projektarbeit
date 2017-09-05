@@ -1,0 +1,349 @@
+
+/*Startseite                    !!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+body{
+    background-color: lightslategray;
+}
+.jumbotron{
+    background-color: white;
+}
+.page-header{
+    background-color: white;
+}
+.page-header h2{
+    color: midnightblue;
+}
+.imgHeader{
+    height: 100%;
+}
+.bildlogin{
+    width: 100%;
+    height: 1000px;
+    background-image: url("StockSnap_BIB.jpg");  ;
+    background-size: 100% 100%;
+}
+.container {
+    padding: 50px 120px;
+}
+#bigImage{
+    width: 100%;
+    max-width: 1900px;
+    -webkit-filter: grayscale(90%);
+    filter: grayscale(90%);
+    margin: auto;
+}
+
+/* Beschreibung der Seite*/
+.buch{
+    border: 10px solid transparent;
+    margin-bottom: 25px;
+    width: 100%;
+    height: 100%;
+    background-color: cornflowerblue;
+    opacity: 0.8;
+}
+
+.loginbox{
+    align-items: center;
+    padding-left: 25%;
+    padding-right: 25%;
+}
+.submitbox{
+    padding-left: 25%;
+    padding-right: 25%;
+    margin: 0 auto;
+}
+
+.register{
+    background-color: slategray;
+}
+
+.kontaktBox{
+    background-color: slategray;
+}
+/* Home */
+.buchcontainer{
+    text-align: center;
+}
+.bcontainer {
+    height: 200px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-color: white;
+    border-radius: 15px 0px 0px 15px;
+}
+.tcontainer {
+    height: 200px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-color: white;
+    border-radius: 0px 15px 15px 0px;
+}
+.vcontainer{
+
+}
+
+
+
+
+/* Verkauf Seite            !!!!!!!!!!!!!!!!!!!!*/
+.logo {
+    font-size: 150px;
+}
+@media screen and (max-width: 768px) {
+    .col-sm-4 {
+        text-align: center;
+        margin: 25px 0;
+    } 
+}
+
+
+
+
+
+/* Buchübersicht*/ 
+.blist{
+    background-color: white;
+    font-size: 16px;
+    border-radius: 10px 10px 10px 10px;
+}  
+
+#googleMap{
+    width:70%;
+    height:500px;
+    margin: 0 auto 0 auto;
+}
+
+
+
+
+/* Pop UP*/
+
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%;
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+div.stars {
+  width: 270px;
+  display: inline-block;
+}
+
+input.star { display: none; }
+
+label.star {
+  float: right;
+  padding: 10px;
+  font-size: 36px;
+  color: #444;
+  transition: all .2s;
+}
+
+input.star:checked ~ label.star:before {
+  content: '\2605';
+  color: #FD4;
+  transition: all .25s;
+}
+
+input.star-5:checked ~ label.star:before {
+  color: #FE7;
+  text-shadow: 0 0 20px #952;
+}
+
+input.star-1:checked ~ label.star:before { color: #F62; }
+
+label.star:hover { transform: rotate(-15deg) scale(1.3); }
+
+label.star:before {
+  content: '\2605';
+}
+
+
+
+
+
+
+
+/* Unterhaltung SIDEBAR */
+
+
+#wrapper {
+  padding-left: 250px;
+  transition: all 0.4s ease 0s;
+}
+
+#sidebar-wrapper {
+  margin-left: -250px;
+  left: 250px;
+  width: 250px;
+  background: lightslategray;
+  position: fixed;
+  height: 100%;
+  overflow-y: auto;
+  z-index: 1000;
+  transition: all 0.4s ease 0s;
+}
+
+#wrapper.active {
+  padding-left: 0;
+}
+
+#wrapper.active #sidebar-wrapper {
+  left: 0;
+}
+
+#page-content-wrapper {
+    margin: auto;
+    padding-left: 30px;  
+    width: 50%;
+}
+
+
+
+.sidebar-nav {
+  position: absolute;
+  top: 0;
+  width: 250px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-nav li {
+  line-height: 40px;
+  text-indent: 20px;
+}
+
+.sidebar-nav li a {
+  color: black;
+  display: block;
+  text-decoration: none;
+  padding-left: 60px;
+}
+
+.sidebar-nav li a span:before {
+  position: absolute;
+  left: 0;
+  color: #41484c;
+  text-align: center;
+  width: 20px;
+  line-height: 18px;
+}
+
+.sidebar-nav li a:hover,
+.sidebar-nav li.active {
+  color: #fff;
+  background: rgba(255,255,255,0.2);
+  text-decoration: none;
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+  text-decoration: none;
+}
+
+.sidebar-nav > .sidebar-brand {
+  height: 65px;
+  line-height: 60px;
+  font-size: 18px;
+}
+
+.sidebar-nav > .sidebar-brand a {
+  color: black;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+  color: #fff;
+  background: none;
+}
+
+
+
+.content-header {
+  height: 65px;
+  line-height: 65px;
+}
+
+.content-header h1 {
+  margin: 0;
+  margin-left: 20px;
+  line-height: 65px;
+  display: inline-block;
+}
+
+#menu-toggle {
+    text-decoration: none;
+}
+
+.btn-menu {
+  color: #000;
+} 
+
+.inset {
+  padding: 20px;
+}
+
+@media (max-width:767px) {
+
+#wrapper {
+  padding-left: 0;
+}
+
+#sidebar-wrapper {
+  left: 0;
+}
+
+#wrapper.active {
+  position: relative;
+  left: 250px;
+}
+
+#wrapper.active #sidebar-wrapper {
+  left: 250px;
+  width: 250px;
+  transition: all 0.4s ease 0s;
+}
+
+#menu-toggle {
+  display: inline-block;
+}
+
+.inset {
+  padding: 15px;
+}
+
+}

@@ -1,0 +1,20 @@
+CREATE DATABASE tauschboerse;
+
+CREATE TABLE `hsba`.`user` ( `id` INT NOT NULL AUTO_INCREMENT , 
+							`vorname` VARCHAR(260) NOT NULL , 
+							`name` VARCHAR(260) NOT NULL , 
+							`email` VARCHAR(260) NOT NULL , 
+							`password` VARCHAR(260) NOT NULL , 
+							PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+CREATE TABLE `hsba`.`buecher` ( `id` INT NOT NULL AUTO_INCREMENT , 
+								`titel` VARCHAR(260) NOT NULL , 
+								`autor` VARCHAR(260) NOT NULL , 
+								`verlag` VARCHAR(260) NOT NULL , 
+								`zustand` VARCHAR(30) NOT NULL , 
+								PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+CREATE TABLE `hsba`.`userbuch` ( `id` INT NOT NULL AUTO_INCREMENT , 
+								`user_id` INT NOT NULL , 
+								`buch_id` INT NOT NULL , 
+								PRIMARY KEY (`id`)) ENGINE = InnoDB;

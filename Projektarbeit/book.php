@@ -37,17 +37,14 @@ function getBook($conn){
 function getAdr($book){
     $address = $book['adresse'].", ".$book['ort'].", ".$book['land'];
     $prepAdr = str_replace(' ','+', $address);
-
     $geocode = file_get_contents('http://maps.google.com/maps/api/geocode/json?address='.$prepAdr.'&sensor=false');
-
     $output = json_decode($geocode);
-
     $lat = $output->results[0]->geometry->location->lat;
     $long = $output->results[0]->geometry->location->lng;
     $LatLng = $lat.",".$long;
-
-    echo $address . "<br>Lat: " .$lat ."<br>Long: " .$long."<br>LatLng: ".$LatLng;
+   
     return $LatLng;
+    
 }
 
 function saveBewertung($conn, $user, $book){
@@ -76,7 +73,6 @@ function saveBewertung($conn, $user, $book){
     <title>Tauschbörse</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="../../css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
@@ -103,7 +99,7 @@ function saveBewertung($conn, $user, $book){
         </div>
     </nav>
     <div class="jumbotron text-center">
-        <h2><?php echo $book['titel'];?></h2>
+        <h2><?= $book['titel'];?></h2>
     </div>
     <div class="row">
         <div class="col-md-4 text-center">
@@ -196,13 +192,13 @@ function saveBewertung($conn, $user, $book){
     </script>
 
     <div class="text-center">
-        <h1>Wo kannst du das Buch abholen?</h1>
+        <h1>Gucke dir den Abholort auf der Karte an.</h1>
 
         <div id="googleMap"></div>
 
         <script>
         function myMap() {
-            var myCenter = new google.maps.LatLng(<?php echo $LatLng; ?>);
+            var myCenter = new google.maps.LatLng(<?= $address ?>);
             var mapCanvas = document.getElementById("googleMap");
             var mapOptions = {center: myCenter, zoom: 15};
             var map = new google.maps.Map(mapCanvas, mapOptions);

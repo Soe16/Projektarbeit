@@ -4,7 +4,7 @@ include 'anmeldefunktion.php';
 
 if ($user ==! null) {
     $book = getBook($conn);
-    $address = getAdr($book);
+    $latlng = getAdr($book);
     if (isset($_POST["bSenden"])) {
         $bewertung = saveBewertung($conn, $user, $book);
     }
@@ -15,58 +15,7 @@ if ($user ==! null) {
     die();
 }
 
-function getBook($conn){
 
-    $sql = "SELECT * FROM buecher WHERE id = ".$_GET["book_id"].";";
-    //$result = $conn->query($sql);
-    $book=array();
-
-    $result = mysqli_query($conn, $sql);
-
-    if (mysqli_num_rows($result) > 0) {
-        // output data of each row
-        while($book = mysqli_fetch_assoc($result)) {
-            return $book;
-        }
-    } else {
-        echo " kein Ergebnis ;( ";
-    }
-
-}
-
-function getAdr($book){
-    $address = $book['adresse'].", ".$book['ort'].", ".$book['land'];
-    $prepAdr = str_replace(' ','+', $address);
-    $geocode = file_get_contents('http://maps.google.com/maps/api/geocode/json?address='.$prepAdr.'&sensor=false');
-    $output = json_decode($geocode);
-    $lat = $output->results[0]->geometry->location->lat;
-    $long = $output->results[0]->geometry->location->lng;
-    $LatLng = $lat.",".$long;
-   
-    return $LatLng;
-    
-}
-
-function saveBewertung($conn, $user, $book){
-
-        $star = $_POST["star"];
-        $kommentar = $_POST["kommentar"];
-        $user_id = $user["id"];
-        $b_user = $book["user_id"];
-
-
-        $insert = $conn->prepare("INSERT INTO bewertung (star, user_id, kommentar, b_user) VALUES (?,?,?,?)");
-        $insert->bind_param('iisi', $star,$user_id,$kommentar,$b_user);
-        $insert->execute();
-        if ($insert !== false){
-            echo "<h2>Danke für deine Bewertung!</h2>"; 
-                    
-        }
-
-        else{
-            echo "<h2>Bei der Bewertung ist etwas schiefgelaufen.</h2>";
-        }  
-}
 ?>
 <!DOCTYPE html>
 <head>
@@ -120,10 +69,12 @@ function saveBewertung($conn, $user, $book){
         <div class="col-md-1"></div>
         <div class="col-md-2 blist">
             <h3>Interesse am Buch?</h3>
-            <h5>Dann schreibe jetzt <?php echo $_GET['seller_fn']. " ".$_GET['seller_ln']?> an.</h5>
+            <h5>Dann schreibe jetzt <a href="unterhaltung.php?user_id=<?= $user['id']?>&chat_user=<?= $book['user_id']?>">
+                    <?php echo $_GET['seller_fn']. " ".$_GET['seller_ln']?></a> an.</h5>
+            <h5>Jetzt anschreiben.<a href="book.php?seller_id=<?= $idtable['seller_id'] ?>"></a>
             <h4>Du hattest schon Kontakt mit dem User?</h4>
             <h5>Dann klicke unten auf den Button Bewertung.</h5>
-            <button class="btn btn-primary" id="myBtn">Bewertung</button>
+            <button class="btn btn-default" id="myBtn">Bewertung</button>
             <br>
 
         </div>
@@ -198,7 +149,7 @@ function saveBewertung($conn, $user, $book){
 
         <script>
         function myMap() {
-            var myCenter = new google.maps.LatLng(<?= $address ?>);
+            var myCenter = new google.maps.LatLng(<?= $latlng ?>);
             var mapCanvas = document.getElementById("googleMap");
             var mapOptions = {center: myCenter, zoom: 15};
             var map = new google.maps.Map(mapCanvas, mapOptions);
@@ -240,3 +191,61 @@ function saveBewertung($conn, $user, $book){
     </div>
 </body>
 </html>
+
+<?php
+
+function getBook($conn){
+
+    $sql = "SELECT * FROM buecher WHERE id = ".$_GET["book_id"].";";
+    //$result = $conn->query($sql);
+    $book=array();
+
+    $result = mysqli_query($conn, $sql);
+
+    if (mysqli_num_rows($result) > 0) {
+        // output data of each row
+        while($book = mysqli_fetch_assoc($result)) {
+            return $book;
+        }
+    } else {
+        echo " kein Ergebnis ;( ";
+    }
+
+}
+
+function getAdr($book){
+    $address = $book['adresse'].", ".$book['ort'].", ".$book['land'];
+    $prepAdr = str_replace(' ','+', $address);
+    $geocode = file_get_contents('http://maps.google.com/maps/api/geocode/json?address='.$prepAdr.'&sensor=false');
+    $output = json_decode($geocode);
+    $lat = $output->results[0]->geometry->location->lat;
+    $long = $output->results[0]->geometry->location->lng;
+    $LatLng = $lat.",".$long;
+   
+    return $LatLng;
+    
+}
+
+function saveBewertung($conn, $user, $book){
+
+        $star = $_POST["star"];
+        $kommentar = $_POST["kommentar"];
+        $user_id = $user["id"];
+        $seller = $book["user_id"];
+
+
+        $insert = $conn->prepare("INSERT INTO bewertung (star, user_id, kommentar, seller) VALUES (?,?,?,?)");
+        $insert->bind_param('iisi', $star,$user_id,$kommentar,$seller);
+        $insert->execute();
+        if ($insert !== false){
+
+            //echo "<h2>Danke für deine Bewertung!</h2>"; 
+            $message = "Danke für deine Bewertung.";
+                    
+        }
+
+        else{
+            $message = "Leider gab es bei der Bewertung ein Problem und sie konnte";
+        }  
+}
+?>

@@ -4,44 +4,16 @@ include 'anmeldefunktion.php';
 
 if ($user ==! null) {
     $books = getMyBooks($conn,$user);
-    $ratings = getMyRating($conn, $user);
+    $avgRating = getAvgRating($conn, $user);
+    $ratings = getAllRatings($conn, $user);
 
 } else {
     // Ohne Anmeldeinformationen geht es hier nicht weiter!
     header('Location: startseite.php');
     die();
 }
-
-
-
-function getMyBooks($conn,$user){
-
-    $sql = "SELECT * FROM buecher WHERE user_id = ".$user['id'].";";
-    $result = $conn->query($sql);
-    $books=array();
-    if ($result->num_rows > 0) {
-        // output data of each row
-        while($row = $result->fetch_assoc()) {
-            $books[]=$row;
-        }
-    }
-    return $books;
-}
-
-function getMyRating($conn,$user){
-
-    $sql= "SELECT * FROM bewertung WHERE b_user =".$user['id'].";";
-    $result = $conn->query($sql);
-    $ratings = array();
-    if ($result->num_rows > 0){
-        while ($row = $result->fetch_assoc()) {
-            $ratings[]=$row;
-        }
-    }
-    return $ratings;
-}
-
 ?>
+
 <!DOCTYPE html>
 <head>
     <title>Tauschbörse</title>
@@ -77,17 +49,13 @@ function getMyRating($conn,$user){
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12 col-sm-12 text-center">
+            <h3>Du wurdest von <?= $avgRating['COUNT(*)']?> Usern bewertet und hast einen durschnitts Wert von <?= $avgRating['AVG(star)']?> Sernen erhalten.</h3>
             <h3>In der Kontoübersicht werden alle deine Bücher, welche du verkaufen möchstest, angezeigt.</h3>
             <h3>Außerdem kannst du hier dein Bewertung angucken.</h3>
         </div>
     </div>
 </div>
-<div class="row">
-    <div class="col-sm-12 text-center">
-        <h3>Andere Nutzer haben dich folgendermaßen bewertet.</h3>
-        <b>Du wurdest von <?= print_r($ratings) ?> bewertet.</b>
-    </div>
-</div>
+
 <div class="text-center">
     <h2>Von dir hochgeladene Bücher</h2>
 </div>
@@ -114,9 +82,25 @@ function getMyRating($conn,$user){
         </div>
         <?php } ?>
 </div>
-<div class="row text-center">
 
-    
+<div class="row text-center">
+    <h2>Hier kannst du alle Bewertungen einzelnd sehen.</h2>
+</div>
+
+<div class="kommentar">
+    <?php foreach ($ratings as $rating){ ?>
+        <div class="row">
+            <div class="col-sm-4 col-md-4">
+            </div>
+            <div class="col-sm-4 col-md-4 well">
+                <h4>Geschrieben von <?= $rating['seller'] ?></h4>
+                Der User hat dir <b><?= $rating['star'] ?> Sterne</b> gegeben.<br>
+                <b>Kommentar:</b> <?php echo $rating["kommentar"] ?>
+            </div>
+            <div class="col-sm-4 col-md-4">
+            </div>
+        </div>
+    <?php } ?>
 </div>
 <div class="kontaktBox">
         <div class="container">
@@ -149,3 +133,55 @@ function getMyRating($conn,$user){
 </div>
 </body>
 </html>
+
+<?php
+/**
+ * @param $conn
+ * @param $user
+ * @return array
+ */
+function getMyBooks($conn,$user){
+
+    $sql = "SELECT * FROM buecher WHERE user_id = ".$user['id'].";";
+    $result = $conn->query($sql);
+    $books=array();
+    if ($result->num_rows > 0) {
+        // output data of each row
+        while($row = $result->fetch_assoc()) {
+            $books[]=$row;
+        }
+    }
+    return $books;
+}
+
+/**
+ * @param $conn
+ * @param $user
+ * @return mixed
+ */
+function getAvgRating($conn, $user){
+    $sql = "SELECT AVG(star), COUNT(*) FROM bewertung WHERE seller =".$user['id'].";";
+    $result = $conn->query($sql);
+    $avgRating = array();
+    $avgRating = $result->fetch_assoc();
+    return $avgRating;
+}
+
+/**
+ * @param $conn
+ * @param $user
+ * @return array
+ */
+function getAllRatings($conn,$user){
+
+    $sql= "SELECT * FROM bewertung WHERE seller =".$user['id'].";";
+    $result = $conn->query($sql);
+    $ratings = array();
+    if ($result->num_rows > 0){
+        while ($row = $result->fetch_assoc()) {
+            $ratings[]=$row;
+        }
+    }
+    return $ratings;
+}
+?>

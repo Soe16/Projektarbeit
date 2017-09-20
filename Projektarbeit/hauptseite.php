@@ -11,15 +11,15 @@ if (!$conn) {
 $user = null;
 $books = null;
 $table = null;
+$login = false;
 if (isset($_POST["email"]) && isset($_POST["password"])) {
     $user = login($conn);
     $books = getAllBooks($conn);
-    $table = matchTable($conn);
-} else if (isset($_SESSION["user_id"])) {
+    $login = true;
+}
+else if (isset($_SESSION["user_id"])) {
     $user = loadUserById($conn, $_SESSION["user_id"]);
     $books = getAllBooks($conn);
-    $table = matchTable($conn);
-    
 } 
 else {
     header('Location: startseite.php');
@@ -60,34 +60,23 @@ else {
         <h1>Die Bücher Tauschbörse</h1>
         <p>Suche dir jetzt dein Buch für das näcshte Modul und erhalte es zu einem fairen Preis.</p>
     </div>
-<!--<div class="col-sm-3">
-    <div class="panel panel-primary">
-        <div class="panel-heading"><b>So viele Möglichkeiten.</b></div>
-            <div class="panel-body">
-            <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-                dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
-                clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
-                consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
-                sed diam voluptua.</p>
+    <?php if($login == true) {?>
+        <div class="container">
+            <div class="alert alert-info" id="willkommen">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <h3>Hallo <?= $user['vorname']?>,</h3>
+                <p> super, dass du dich für diese Seite entschieden hast.
+                    Auf der Hauptseite werden dir alle aktuellen Bücher angezeigt,
+                    welche zum Verkauf stehen. Wenn du dich für ein Buch interessierts und genauere
+                    Informationen über das Buch und den Verkäufer haben möchtest, dann <b>klicke auf den
+                        Titel</b> des Buches und du wirst zur Übersicht weitergeleitet.
+                </p>
+                <h3>Viel Spaß!</h3>
             </div>
-    </div>
-</div>-->
-<div class="row">
-    <div class="col-md-2"></div>
-    <div class="col-md-8 well">
-        <h3>Hallo <?= $user['vorname']?>,</h3>
-        <p> super, dass du dich für diese Seite entschieden hast.
-            Auf der Hauptseite werden dir alle aktuellen Bücher angezeigt,
-            welche zum Verkauf stehen. Wenn du dich für ein Buch interessierts und genauere
-            Informationen über das Buch und den Verkäufer haben möchtest, dann <b>klicke auf den
-            Titel</b> des Buches und du wirst zur Übersicht weitergeleitet.
-        </p>
-        <h4>Viel Erfolg!</h4>
-    </div>
-    <div class="col-md-2"></div>
-</div>
+        </div>
+    <?php } ?>
     <div class="vcontainer">
-        <?php foreach ($table as $idtable){ ?>
+        <?php foreach ($books as $book){ ?>
         <div class="row">
             <div class="col-sm-3">
             </div>
@@ -95,13 +84,13 @@ else {
                 <span class="glyphicon glyphicon-book logo"></span>
             </div>
             <div class="col-sm-4 tcontainer">
-                <h4><u><a href="book.php?book_id=<?= $idtable['id']?>&seller_fn=<?= $idtable['vorname']?>&seller_ln=<?= $idtable['name']?>">
-                <?php echo $idtable["titel"] ?></a></u></h4>    
-                <ul>
-                    <li>Autor: <?php echo $idtable["autor"] ?></li>
-                    <li>Verlag: <?php echo $idtable["verlag"] ?></li>
-                    <li>Zustand: <?php echo $idtable["zustand"]?></li>
-                    <li>Reingestellt von: <?php echo $idtable["vorname"] . " " . $idtable["name"]?></li>
+                <h4><u><a href="book.php?book_id=<?= $book['id']?>&seller_fn=<?= $book['vorname']?>&seller_ln=<?= $book['name']?>">
+                <?php echo $book["titel"] ?></a></u></h4>
+                <ul class="list-group">
+                    <li class="list-group-item">Autor: <?php echo $book["autor"] ?></li>
+                    <li class="list-group-item">Verlag: <?php echo $book["verlag"] ?></li>
+                    <li class="list-group-item">Zustand: <?php echo $book["zustand"]?></li>
+                    <li class="list-group-item">Reingestellt von: <?php echo $book["vorname"] . " " . $book["name"]?></li>
                 </ul>
             </div>
             <div class="col-sm-3">
@@ -165,11 +154,16 @@ function login($conn) {
         return $user;
     } else {
         // Wenn Email +Passwort nicht korrekt sind, dann auf die Startseite zurück
-        header('Location: startseite.php');
+        header('Location: startseite.php?fehler');
         die();
     }
 }
 
+/**
+ * @param $conn
+ * @param $user_id
+ * @return array|null
+ */
 function loadUserById($conn, $user_id) {
     $sql = "SELECT * FROM `user` WHERE `id` = '$user_id'";
     $result = mysqli_query($conn, $sql);
@@ -185,12 +179,13 @@ function loadUserById($conn, $user_id) {
 }
 
 /**
- * Get All Books from the buecher Table
  * @param $conn
  * @return array
  */
 function getAllBooks($conn){
-    $sql = "SELECT * FROM buecher;";
+    $sql = "SELECT buecher.id, buecher.titel, buecher.autor, buecher.verlag, buecher.zustand, buecher.user_id, user.vorname, user.name
+        FROM user
+        INNER JOIN buecher ON user.id = buecher.user_id;";
     $result = $conn->query($sql);
     $books=array();
     if ($result->num_rows > 0) {
@@ -200,22 +195,6 @@ function getAllBooks($conn){
         }
     }
     return $books;
-}
-
-
-function matchTable($conn){
-    $sql = "SELECT buecher.id, buecher.titel, buecher.autor, buecher.verlag, buecher.zustand, buecher.user_id, user.vorname, user.name
-        FROM user
-        INNER JOIN buecher ON user.id = buecher.user_id;";
-    $result = $conn->query($sql);
-    $table=array();
-    if ($result->num_rows > 0) {
-        // output data of each row
-        while($row = $result->fetch_assoc()) {
-            $table[]=$row;
-        }
-    }
-    return $table;
 }
 
 ?>

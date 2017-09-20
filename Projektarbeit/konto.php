@@ -50,6 +50,13 @@ if ($user ==! null) {
     <div class="row">
         <div class="col-md-12 col-sm-12 text-center">
             <h3>Du wurdest von <?= $avgRating['COUNT(*)']?> Usern bewertet und hast einen durschnitts Wert von <?= $avgRating['AVG(star)']?> Sernen erhalten.</h3>
+            <div class="stars">
+                <label class="star star-5" for="star-5"></label>
+                <label class="star star-4" for="star-4"></label>
+                <label class="star star-3" for="star-3"></label>
+                <label class="star star-2" for="star-2"></label>
+                <label class="star star-1" for="star-1"></label>
+            </div>
             <h3>In der Kontoübersicht werden alle deine Bücher, welche du verkaufen möchstest, angezeigt.</h3>
             <h3>Außerdem kannst du hier dein Bewertung angucken.</h3>
         </div>
@@ -69,12 +76,12 @@ if ($user ==! null) {
             </div>
             <div class="col-sm-4 col-md-4 tcontainer">
                 <b><u><?php echo $book["titel"] ?></u></b>
-                <ul>
-                    <li> Autor: <?php echo $book["autor"] ?></li>
-                    <li> Verlag: <?php echo $book["verlag"] ?></li>
-                    <li> Zustand: <?php echo $book["zustand"]?></li>
-                    <li> Preis: <?php echo $book["price"] ?></li>
-                    <li> Adresse: <?php echo $book["adresse"] . " / " . $book["plz"] . "," . $book["ort"]?></li>
+                <ul class="list-group">
+                    <li class="list-group-item"> Autor: <?php echo $book["autor"] ?></li>
+                    <li class="list-group-item"> Verlag: <?php echo $book["verlag"] ?></li>
+                    <li class="list-group-item"> Zustand: <?php echo $book["zustand"]?></li>
+                    <li class="list-group-item"> Preis: <?php echo $book["price"] ?></li>
+                    <li class="list-group-item"> Adresse: <?php echo $book["adresse"] . " / " . $book["plz"] . "," . $book["ort"]?></li>
                 </ul>    
             </div>
             <div class="col-sm-3 col-md-3">
@@ -82,10 +89,11 @@ if ($user ==! null) {
         </div>
         <?php } ?>
 </div>
-
-<div class="row text-center">
-    <h2>Hier kannst du alle Bewertungen einzelnd sehen.</h2>
-</div>
+<br>
+<br>
+    <div class="text-center">
+        <h1>Kommentare und Bewertungen</h1>
+    </div>
 
 <div class="kommentar">
     <?php foreach ($ratings as $rating){ ?>
@@ -93,8 +101,8 @@ if ($user ==! null) {
             <div class="col-sm-4 col-md-4">
             </div>
             <div class="col-sm-4 col-md-4 well">
-                <h4>Geschrieben von <?= $rating['seller'] ?></h4>
-                Der User hat dir <b><?= $rating['star'] ?> Sterne</b> gegeben.<br>
+                <h4>Geschrieben von <?= $rating['vorname'] ?></h4>
+                Du hast <b><?= $rating['star'] ?> Sterne</b> erhalten.<br>
                 <b>Kommentar:</b> <?php echo $rating["kommentar"] ?>
             </div>
             <div class="col-sm-4 col-md-4">
@@ -168,13 +176,17 @@ function getAvgRating($conn, $user){
 }
 
 /**
+ * get all Raiting include the names of the writer
  * @param $conn
  * @param $user
  * @return array
  */
 function getAllRatings($conn,$user){
 
-    $sql= "SELECT * FROM bewertung WHERE seller =".$user['id'].";";
+    //$sql= "SELECT * FROM bewertung WHERE seller =".$user['id'].";";
+    $sql="SELECT bewertung.id, bewertung.kommentar, bewertung.seller, bewertung.user_id, bewertung.star, user.vorname, user.name
+        FROM user
+        INNER JOIN bewertung ON user.id = bewertung.user_id;";
     $result = $conn->query($sql);
     $ratings = array();
     if ($result->num_rows > 0){
@@ -184,4 +196,5 @@ function getAllRatings($conn,$user){
     }
     return $ratings;
 }
+
 ?>

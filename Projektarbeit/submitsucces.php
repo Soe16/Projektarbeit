@@ -18,11 +18,11 @@ $anmeldung = null;
 
 if (isset($_POST["absenden"])) {
 
-    $vorname = $_POST["vorname"];
-    $name = $_POST["name"];
-    $email = $_POST["email"];
-    $passwort = $_POST["passwort"];
-    $passwort2 = $_POST["passwort2"];
+    $vorname = mysqli_real_escape_string($conn, $_POST["vorname"]);
+    $name = mysqli_real_escape_string($conn, $_POST["name"]);
+    $email = mysqli_real_escape_string($conn, $_POST["email"]);
+    $passwort = mysqli_real_escape_string($conn, $_POST["passwort"]);
+    $passwort2 = mysqli_real_escape_string($conn, $_POST["passwort2"]);
 
     $search_user = $db->prepare("SELECT id FROM user WHERE email = ?");
     $search_user->bind_param('s', $email);
@@ -68,16 +68,18 @@ if (isset($_POST["absenden"])) {
     <h1>Die Tauschbörse für Bücher</h1>
     <p>Günstig Bücher kaufen</p>
 </div>
-
-<div class="panel panel-primary text-center">
-    <div class="panel-heading">
-        <em>Registrierung</em>
-    </div>
-    <div class="panel-body">
-        <p> <?php echo $text; ?></p><br>
-        <a href="startseite.php">Aufgehts</a>
+<div class="container">
+    <div class="panel panel-primary text-center">
+        <div class="panel-heading">
+            <em>Registrierung</em>
+        </div>
+        <div class="panel-body">
+            <p> <?php echo $text; ?></p><br>
+            <a href="startseite.php">Aufgehts</a>
+        </div>
     </div>
 </div>
+
 
 </body>
 </html>

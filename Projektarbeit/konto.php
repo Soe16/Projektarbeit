@@ -155,7 +155,7 @@ function getMyBooks($conn,$user){
     $books=array();
     if ($result->num_rows > 0) {
         // output data of each row
-        while($row = $result->fetch_assoc()) {
+        while($row = mysqli_fetch_assoc($result)) {
             $books[]=$row;
         }
     }
@@ -171,7 +171,7 @@ function getAvgRating($conn, $user){
     $sql = "SELECT AVG(star), COUNT(*) FROM bewertung WHERE seller =".$user['id'].";";
     $result = $conn->query($sql);
     $avgRating = array();
-    $avgRating = $result->fetch_assoc();
+    $avgRating = mysqli_fetch_assoc($result);
     return $avgRating;
 }
 
@@ -190,7 +190,7 @@ function getAllRatings($conn,$user){
     $result = $conn->query($sql);
     $ratings = array();
     if ($result->num_rows > 0){
-        while ($row = $result->fetch_assoc()) {
+        while ($row = mysqli_fetch_assoc($result)) {
             $ratings[]=$row;
         }
     }
